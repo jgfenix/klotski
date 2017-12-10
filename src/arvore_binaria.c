@@ -42,7 +42,6 @@ void printa_arvore(struct no *raiz ) {
 int busca_na_arvore(struct no *raiz, int valor ) {
 	int achou = 0;
 	if(raiz) {
-		printf("\n(%d)", raiz->info);
 		if(raiz->info == valor) {
 			achou = 1;
 			return achou;
@@ -69,7 +68,7 @@ int main(int argc, char **argv)
 	raiz = add_arvore(raiz, 11);
 	raiz = add_arvore(raiz, 1);
 	printa_arvore(raiz);
-	printf("ACHOU? %d\n",busca_na_arvore(raiz,5) );
+	printf("\nACHOU? %d\n",busca_na_arvore(raiz,5) );
 	
 	return 0;
 }
