@@ -1,13 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
+
 #define MAPSIZE	7
 #define FILHOS 6
+#define LINHAS 5
+#define COLUNAS 7 //se considerar a saida como o 7
 
 //imprime uma matriz
-void imprimeMatriz(int c[MAPSIZE][MAPSIZE]){
+void imprimeMatriz(int c[LINHAS][COLUNAS]){
 	int i,j=0;
-	for(i=0;i<MAPSIZE;i++){
-		for(j=0;j<MAPSIZE;j++){
+	for(i=0;i<LINHAS;i++){
+		for(j=0;j<COLUNAS;j++){
 			//printf("i:%d j:%d %d:%c\n",i,j,c[i][j],c[i][j]);
 			printf("%c",c[i][j]);
 		}
@@ -16,20 +19,20 @@ void imprimeMatriz(int c[MAPSIZE][MAPSIZE]){
 }
 
 //copia uma matriz pra outra
-void copiaMatriz(int cola[MAPSIZE][MAPSIZE],int copia[MAPSIZE][MAPSIZE]){
+void copiaMatriz(int cola[LINHAS][COLUNAS],int copia[LINHAS][COLUNAS]){
 	int i,j=0;
-	for(i=0;i<MAPSIZE;i++){
-		for(j=0;j<MAPSIZE;j++){
+	for(i=0;i<LINHAS;i++){
+		for(j=0;j<COLUNAS;j++){
 			cola[i][j]=copia[i][j];
 		}
 	}
 }
 
 //compara duas matrizes e retorna 1 se são diferentes
-int comparaMatiz(int cola[MAPSIZE][MAPSIZE],int copia[MAPSIZE][MAPSIZE]){
+int comparaMatiz(int cola[LINHAS][COLUNAS],int copia[LINHAS][COLUNAS]){
 	int i,j,ret=0;
-	for(i=0;i<MAPSIZE;i++){
-		for(j=0;j<MAPSIZE;j++){
+	for(i=0;i<LINHAS;i++){
+		for(j=0;j<COLUNAS;j++){
 			if(cola[i][j]!=copia[i][j]){
 				ret++;
 				break;
@@ -43,7 +46,7 @@ int comparaMatiz(int cola[MAPSIZE][MAPSIZE],int copia[MAPSIZE][MAPSIZE]){
 }
 
 struct No {
-	int map[MAPSIZE][MAPSIZE];
+	int map[LINHAS][COLUNAS];
 	int repetido;	//se é repetida então =1
 	int sol;		//se é solução entao =1
 	struct No *pai;
@@ -60,7 +63,7 @@ void setRepetido(No *Raiz){
 }
 
 //insere em até 8 filhos/possibilidades de movimento para cada estado atual
-void insereNo(No **Raiz, int input[MAPSIZE][MAPSIZE]){
+void insereNo(No **Raiz, int input[LINHAS][COLUNAS]){
 	if (*Raiz){
 		*Raiz=(No *)malloc(sizeof (No));
 		int i =0;
@@ -72,8 +75,8 @@ void insereNo(No **Raiz, int input[MAPSIZE][MAPSIZE]){
 		(*Raiz)->pai=(*Raiz);
 		// copiaMatriz((*Raiz)->map,input);
 		int j=0;
-		for(i=0;i<MAPSIZE;i++){
-			for(j=0;j<MAPSIZE;j++){
+		for(i=0;i<LINHAS;i++){
+			for(j=0;j<COLUNAS;j++){
 				// cola[i][j]=copia[i][j];
 				(*Raiz)->map[i][j]=input[i][j];
 				//A copia acontece
@@ -115,17 +118,17 @@ void mapPeca(int moveTo, int x, int y, No **p){
 	// printf("mapPeca\n");
 	int i,j,flag=0;
 	int peca = (*p)->map[x][y];
-	int backup[MAPSIZE][MAPSIZE]={0};
+	int backup[LINHAS][COLUNAS]={0};
 	
-	for(i=0;i<MAPSIZE;i++){
-		for(j=0;j<MAPSIZE;j++){
+	for(i=0;i<LINHAS;i++){
+		for(j=0;j<COLUNAS;j++){
 			backup[i][j]=(*p)->map[i][j];
 			if((i>0)&&(moveTo=='<')){//moveLeft		
 				if(((*p)->map[i][j]==peca)&&((*p)->map[i-1][j]==' ')){
 					(*p)->map[i-1][j]=(*p)->map[i][j];
 				}
 				else{
-					flag ==1;
+					flag =1;
 				}
 			}
 			if((j>0)&(moveTo=='^')){//moveUp
@@ -133,23 +136,23 @@ void mapPeca(int moveTo, int x, int y, No **p){
 					(*p)->map[i][j-1]=(*p)->map[i][j];
 				}
 				else{
-					flag ==1;
+					flag =1;
 				}
 			}
-			if((i<MAPSIZE)&(moveTo=='>')){//moveRigth
+			if((i<LINHAS)&(moveTo=='>')){//moveRigth
 				if(((*p)->map[i][j]==peca)&&((*p)->map[i+1][j]==' ')){
 					(*p)->map[i+1][j]=(*p)->map[i][j];
 				}
 				else{
-					flag ==1;
+					flag =1;
 				}
 			}
-			if((j<MAPSIZE)&(moveTo=='|')){//moveBot
+			if((j<COLUNAS)&(moveTo=='|')){//moveBot
 				if(((*p)->map[i][j]==peca)&&((*p)->map[i][j-1]==' ')){
 					(*p)->map[i][j-1]=(*p)->map[i][j];
 				}
 				else{
-					flag ==1;
+					flag =1;
 				}
 			}		
 		}
@@ -217,23 +220,52 @@ void buscaEspaco(No *pRaiz){
 	}
 }
 
-int main (int argc, char **argv){
+//Toda hora precisa gerar uma matriz zerada, entao melhor uma funcao pra isso logo
+int** cria_matriz_zerada() {
+	int i, j;
+	int **input = (int**)malloc(LINHAS * sizeof(int*)); //Aloca um Vetor de Ponteiros
 
-	int input[MAPSIZE][MAPSIZE]={0};
-	int i,j,c=0;
-	No *raiz;
-	
-	while ((c=getchar())!=EOF){
+	for (i = 0; i < LINHAS; i++){ //Percorre as linhas do Vetor de Ponteiros
+		input[i] = (int*) malloc(COLUNAS * sizeof(int)); //Aloca um Vetor de Inteiros para cada posição do Vetor de Ponteiros.
+		for (j = 0; j < COLUNAS; j++){ //Percorre o Vetor de Inteiros atual.
+			input[i][j] = ' '; //Inicializa com ' '.
+		}
+	}
+	return input; //Retorna o Ponteiro para a Matriz Alocada
+};
+
+int** pega_matriz_entrada() {
+	printf("DIGITE A MATRIZ\n");
+	int i=0,j=0;
+	int c;
+
+	int **input = cria_matriz_zerada();
+	if(!input) {
+		printf("\nfuncao 'pega_matriz_entrada' \nDEU RUIM AO ALOCAR A MATRIZ\n");
+		exit(1);
+	}
+
+	while (/*(c=getchar())!=EOF ||*/ i < LINHAS){
+		c=getchar();
 		if(c =='\n'){
 			i++;
 			j=0;
-			//printf("%c",c);			
 		}
 		else{
-			//printf("%c",c);			
 			input[i][j++]=c;					
 		}
 	}
+	return input;
+}
+
+int main (int argc, char **argv){
+
+	int** input;
+	int i,j,c=0;
+	No *raiz;
+	
+	input = pega_matriz_entrada();
+
 	// imprimeMatriz(input);
 	insereNo(&raiz,input);
 	insereNo(&raiz,input);
