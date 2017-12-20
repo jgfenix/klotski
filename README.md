@@ -28,6 +28,13 @@ TOOICN
 Uma solução possível para este problema é o da força bruta, procurando todas as possibilidades até colocar a donzela na posição adequada do tabuleiro. Esta busca pode ser computacionalmente muito intensiva e você deve eliminar os caminhos já pecorridos.  Uma forma de diminuir este trabalho seria armazenar cada movimento possível numa árvore (não binária). Assim, a partir da posição inicial, temos 3 possíveis movimentos: da própria donzela, para a direita; do pai, para a esquerda e do irmão, para cima. Se cada possível configuração do tabuleiro possuir uma identificação única, se viocê atingir uma configuração que já se encontra na árvore, você pode continuar a partir deste ponto.
 </p>
 
+<h2>Níveis resolvidos</h2>
+
+  <img src="https://github.com/jgfenix/klotski/blob/master/img/niveis_resolvidos.jpeg" align="center"/>
+  Basta ir na pasta src, e com o terminal, digitar(por exemplo):
+  <br>make nivel_1<br>make nivel_2
+  *estão disponíveis os níveis de 1 a 6 + labirinto
+  
 <h2>Obs:</h2>
 Quem fizer para a seguinte configuração, ganha metade dos pontos.
 
