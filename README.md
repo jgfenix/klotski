@@ -39,3 +39,5 @@ Uma solução possível para este problema é o da força bruta, procurando toda
 Quem fizer para a seguinte configuração, ganha metade dos pontos.
 
 <a href="https://github.com/jgfenix/klotski/blob/master/img/d37cf0507daf80ed379d080f31162772.media.221x259.png" class="media" title="haikoiri1.png"><img src="https://github.com/jgfenix/klotski/blob/master/img/d37cf0507daf80ed379d080f31162772.media.221x259.png" class="medialeft" align="left" alt="" /></a>
+
+<b>OBS: talvez seja necessario instalar a libx11-dev:</b> sudo apt-get install libx11-dev
