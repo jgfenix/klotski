@@ -7,6 +7,84 @@
 #define MAPSIZE	7
 #define FILHOS 6
 #define ITERACOES 200
+#define LEN 256
+#include <stdio.h>
+#include <time.h>
+#include "gfx.h"
+
+#define MAXCHAR 1000
+
+#define xsize 500
+#define ysize 500
+#define proporcao 9
+
+void delay(int number_of_seconds) {
+    // Converting time into milli_seconds
+    int milli_seconds = 1000 * number_of_seconds;
+
+    // Stroing start time
+    clock_t start_time = clock();
+
+    // looping till required time is not acheived
+    while (clock() < start_time + milli_seconds)
+        ;
+}
+
+void quadrado(int x, int y, int red, int green, int blue ) {
+	// Set the current drawing color to green.
+	gfx_color(red, green, blue);
+	gfx_line((x*xsize/proporcao),		(y*xsize/proporcao),		(x*xsize/proporcao)+xsize/proporcao,	(y*xsize/proporcao));
+	gfx_line((x*xsize/proporcao)+xsize/proporcao,		(y*xsize/proporcao),		(x*xsize/proporcao)+xsize/proporcao,	(y*xsize/proporcao)+xsize/proporcao);
+	gfx_line((x*xsize/proporcao)+xsize/proporcao,		(y*xsize/proporcao)+xsize/proporcao,	(x*xsize/proporcao),		(y*xsize/proporcao)+xsize/proporcao);
+	gfx_line((x*xsize/proporcao),		(y*xsize/proporcao)+xsize/proporcao,	(x*xsize/proporcao),		(y*xsize/proporcao));
+
+	for (int i = (x*xsize/proporcao); i < (x*xsize/proporcao)+xsize/proporcao; ++i) {
+		for (int j = (y*xsize/proporcao); j < (y*xsize/proporcao)+xsize/proporcao; ++j) {
+			gfx_point(i,j);
+		}
+	}
+	// delay(10);
+}
+
+void zero(int x, int y) {
+	quadrado(x,y, 0,255,140);
+}
+
+void espaco(int x, int y) {
+	quadrado(x,y, 255,255,255);
+}
+
+void letra_A(int x, int y) {
+	quadrado(x,y, 100,100,0);
+}
+
+void letra_B(int x, int y) {
+	quadrado(x,y, 50,0,100);
+}
+
+void letra_C(int x, int y) {
+	quadrado(x,y, 90,40,100);
+}
+
+void letra_D(int x, int y) {
+	quadrado(x,y, 255,0,0);
+}
+
+void letra_E(int x, int y) {
+	quadrado(x,y, 50,200,100);
+}
+
+void letra_F(int x, int y) {
+	quadrado(x,y, 0,80,150);
+}
+
+void letra_I(int x, int y) {
+	quadrado(x,y, 125,180,20);
+}
+
+void letra_S(int x, int y) {
+	quadrado(x,y, 0,255,0);
+}
 
 int global =0;	//sinaliza quando a solução foi encontrada
 
@@ -32,15 +110,47 @@ int** cria_matriz_zerada() {
 
 //imprime uma matriz
 void imprimeMatriz(int **c){
+	int x = 1, y = 1;
+
 	int i,j=0;
 	for(i=0;i<MAPSIZE;i++){
 		for(j=0;j<MAPSIZE;j++){
-			if(c[i][j] == 'D')
-				printf(BLU "%c" RESET,c[i][j]);
-			else
-				printf("%c",c[i][j]);
+			switch(c[i][j]) {
+				case 'A':
+					letra_A(x,y);
+					break;
+				case 'B':
+					letra_B(x,y);
+					break;
+				case 'C':
+					letra_C(x,y);
+					break;
+				case 'D':
+					letra_D(x,y);
+					break;
+				case 'E':
+					letra_E(x,y);
+					break;
+				case 'F':
+					letra_F(x,y);
+					break;
+				case 'I':
+					letra_I(x,y);
+					break;
+				case '0':
+					zero(x,y);
+					break;
+				case ' ':
+					espaco(x,y);
+					break;
+
+			}
+			x++;
 		}
-		printf("\n");
+		y++;
+		x=1;
+		// gfx_flush();
+		delay(20);
 	}
 }
 
@@ -108,9 +218,9 @@ int isSolucao(No **p){
 
 void imprimeResposta(No **p){
 	if(*p){
-		printf(" === imprimindo solução === \n");
-		imprimeMatriz((*p)->map);
+		//printf(" === imprimindo solução === \n");
 		imprimeResposta(&(*p)->pai);
+		imprimeMatriz((*p)->map);
 	}
 }
 
@@ -158,23 +268,14 @@ No* insereNo(No **Raiz, int** input, No *pai){		//inserção ok
 			}
 		}
 		if(isSolucao(Raiz)) {
-			// printf("\n\nachooooo\n");
-			// imprimeMatriz((*Raiz)->map);
 			imprimeResposta(Raiz);
+			delay(00);
 			exit(1);
 		}
 		(*Raiz)->sol=isSolucao(Raiz);
 		global=isSolucao(Raiz);
 
-		//printf("sol:%d\n",(*Raiz)->sol );
-		//if((*Raiz)->sol ==1)	printf("ENCONTREI!!!\n");
-		//printf("GLOBAL:%d\n",global);
-		//imprimeMatriz((*Raiz)->map);
-		if((*Raiz)->sol==1) {
-			printf(" \t\t==== ENCONRREI ====<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n");;
-			imprimeResposta(Raiz);
-			exit(0);
-		}
+		
 		return (*Raiz);
 	}
 	else {
@@ -182,8 +283,6 @@ No* insereNo(No **Raiz, int** input, No *pai){		//inserção ok
 			int i=0;
 			for (i=0;i<FILHOS;i++){			//procuro um filho vago pra inserir
 				if((*Raiz)->filho[i]==NULL){
-					//printf("inseriu filho %d\n",i);
-					//imprimeMatriz(input);
 					(*Raiz)->filho[i]=insereNo(&(*Raiz)->filho[i],input,*Raiz);
 					break;		//se eu insiro em um filho vago, posso parar de procurar	
 				}
@@ -207,9 +306,6 @@ int ** mapPeca(int moveTo, int x, int y, No **p){
 	int** backup = cria_matriz_zerada();
 	//espaço e vazio e nao me interessa
 	if((peca != ' ')&&(peca != 0)&&(peca != 'S')&&(peca != '0')){		//condições de skip
-		//printf("=== DEBUG mapPeca === \nMatriz Pai\n");
-		//imprimeMatriz((*p)->map);
-		//printf("Matriz filha === trying to move %c to %c\n",peca,moveTo);
 		if(peca == 'I'){
 			for(i=0;i<MAPSIZE;i++){
 				for(j=0;j<MAPSIZE;j++){
@@ -372,7 +468,7 @@ int** pega_matriz_entrada() {
 	int **input = cria_matriz_zerada();
 	if(!input) {
 		printf("\nfuncao 'pega_matriz_entrada' \nDEU RUIM AO ALOCAR A MATRIZ\n");
-		exit(1);
+		// exit(1);
 	}
 
 	while ((c=getchar())!=EOF){
@@ -389,20 +485,27 @@ int** pega_matriz_entrada() {
 
 int main (int argc, char **argv){
 
-	int** input;
+	gfx_open(xsize,ysize,"Klotski Returns!");
+    int** input;
+	// char c;
+
 	// No *raiz=NULL;
 	
 	input = pega_matriz_entrada();
 
-	// printf("Matriz inicial:\n");
-	//imprimeMatriz(input);//ok
 	insereNo(&raiz,input,NULL);//ok
 	int i=0;
 	for (i=0;i<ITERACOES;i++){
-		printf("##############################\nparei na %d	\n##############################\n", i );
+		//printf("##############################\nparei na %d	\n##############################\n", i );
 		buscaEspaco(&raiz);//ok
 	}
 	//movimento(raiz);
+	// while(1) {
+	// 	c = gfx_wait();
+
+	// 	// Quit if it is the letter q.
+	// 	if(c=='q') break;
+	// }
 
 	return 1;
 }
